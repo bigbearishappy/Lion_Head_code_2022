@@ -53,9 +53,13 @@ static uint8_t power_on = 0;
 
 void setup() {
   // initialize digital pin
-  pinMode(4, OUTPUT);
-  pinMode(8, OUTPUT);
+  pinMode(5, OUTPUT);//left eye
+  pinMode(6, OUTPUT);//right eye
   pinMode(7, INPUT);
+
+  // initialize the pwm of eye
+  analogWrite(5, 255);
+  analogWrite(9, 255);
 
   // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
   #if defined (__AVR_ATtiny85__)
@@ -78,13 +82,16 @@ void setup() {
 // the loop function runs over and over again forever
 void loop() {
   for(int i = 0;i < 5; ++i){
-    digitalWrite(4, HIGH);
-    digitalWrite(8, HIGH);
-    delay(200);           
-    digitalWrite(4, LOW); 
-    digitalWrite(8, LOW);
-    delay(200);           
+    analogWrite(5, 0);
+    analogWrite(9, 0);
+    delay(200);     
+    analogWrite(5, 255);
+    analogWrite(9, 255);
+    delay(200);                 
   }
+
+  analogWrite(5, 255);
+  analogWrite(9, 255);
 
   Mp3Player.play();
   delay(200);

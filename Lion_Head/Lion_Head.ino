@@ -49,13 +49,14 @@ int delayval = 3; // delay for half a second
 static uint8_t recv_cmd[8] = {};
 //------------------------------------------------------------------------------------------------
 
-static uint8_t power_on = 0;
+static uint8_t active_cnt = 0;
 
 void setup() {
   // initialize digital pin
   pinMode(5, OUTPUT);//left eye
   pinMode(6, OUTPUT);//right eye
   pinMode(7, INPUT);
+  pinMode(2, INPUT);//PIR sensor input
 
   // initialize the pwm of eye
   analogWrite(5, 255);
@@ -81,45 +82,30 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  for(int i = 0;i < 5; ++i){
+  bool state = digitalRead(2); // read from PIR sensor
+  if (state == 1) {
+    for(int i = 0;i < 2; ++i){
+      analogWrite(5, 0);
+      analogWrite(9, 0);
+      delay(200);     
+      analogWrite(5, 255);
+      analogWrite(9, 255);
+      delay(200);                 
+
+      int r=random(0,250);
+      int g=random(0,250);
+      int b=random(0,250);
+
+      if (active_cnt >= NUMPIXELS)
+        active_cnt = 0;
+      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+      pixels.setPixelColor(active_cnt++, pixels.Color(r, g, b)); // Moderately bright green color.
+
+      pixels.show(); // This sends the updated pixel color to the hardware.
+    }
+  } else {
     analogWrite(5, 0);
     analogWrite(9, 0);
-    delay(200);     
-    analogWrite(5, 255);
-    analogWrite(9, 255);
-    delay(200);                 
   }
-
-  analogWrite(5, 255);
-  analogWrite(9, 255);
-
-  Mp3Player.play();
-  delay(200);
-
-  for (int i = 0; i < NUMPIXELS; i++) {
-      int r=random(0,250);
-      int g=random(0,250);
-      int b=random(0,250);
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-      pixels.setPixelColor(i, pixels.Color(255, 255, 255)); // Moderately bright green color.
-
-      pixels.show(); // This sends the updated pixel color to the hardware.
-
-      delay(delayval); // Delay for a period of time (in milliseconds).
-  }
-
-  delay(1000);
-    
-  for (int i = 0; i < NUMPIXELS; i++) {
-      int r=random(0,250);
-      int g=random(0,250);
-      int b=random(0,250);
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-      pixels.setPixelColor(i, pixels.Color(255, 0, 0)); // Moderately bright green color.
-
-      pixels.show(); // This sends the updated pixel color to the hardware.
-
-      delay(delayval); // Delay for a period of time (in milliseconds).
-  }
-  delay(1000);
+  delay(10);
 }

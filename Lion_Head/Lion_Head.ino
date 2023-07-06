@@ -49,8 +49,6 @@ int delayval = 3; // delay for half a second
 static uint8_t recv_cmd[8] = {};
 //------------------------------------------------------------------------------------------------
 
-static uint8_t active_cnt = 0;
-
 void setup() {
   // initialize digital pin
   pinMode(5, OUTPUT);//left eye
@@ -91,21 +89,10 @@ void loop() {
       analogWrite(5, 255);
       analogWrite(9, 255);
       delay(200);                 
-
-      int r=random(0,250);
-      int g=random(0,250);
-      int b=random(0,250);
-
-      if (active_cnt >= NUMPIXELS)
-        active_cnt = 0;
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-      pixels.setPixelColor(active_cnt++, pixels.Color(r, g, b)); // Moderately bright green color.
-
-      pixels.show(); // This sends the updated pixel color to the hardware.
     }
   } else {
     analogWrite(5, 0);
     analogWrite(9, 0);
   }
-  delay(10);
+  delay(100);
 }
